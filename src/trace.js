@@ -8,6 +8,7 @@ export default function(Chart) {
 			deactivateEvents: [
 				'mouseout',
 			],
+			greyOutBehind: false,
 		},
 		sync: {
 			enabled: true,
@@ -255,6 +256,9 @@ export default function(Chart) {
 			if (chart.crosshair.dragStarted) {
 				this.drawZoombox(chart);
 			} else {
+				if(this.getOption(chart, 'line', 'greyOutBehind')) {
+					this.drawGreyedOutRect(chart);
+				}
 				this.drawTraceLine(chart);
 				this.interpolateValues(chart);
 				this.drawTracePoints(chart);
@@ -498,6 +502,15 @@ export default function(Chart) {
 
 			}
 
+		},
+
+		drawGreyedOutRect: function(chart) {
+			var yScale = this.getYScale(chart);
+			var lineX = chart.crosshair.x;
+			chart.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+			chart.ctx.fillRect(
+				lineX, 0, chart.width, yScale.getPixelForValue(yScale.min),
+			);
 		},
 
 		interpolateValues: function(chart) {
