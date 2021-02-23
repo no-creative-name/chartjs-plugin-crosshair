@@ -384,7 +384,7 @@ function TracePlugin(Chart) {
 			if (chart.crosshair.dragStarted) {
 				this.drawZoombox(chart);
 			} else {
-				if(this.getOption(chart, 'line', 'greyOutBehind')) {
+				if(this.getOption(chart, 'line', 'fillBehind')) {
 					this.drawGreyedOutRect(chart);
 				}
 				this.drawTraceLine(chart);
@@ -647,7 +647,7 @@ function TracePlugin(Chart) {
 		drawGreyedOutRect: function(chart) {
 			var yScale = this.getYScale(chart);
 			var lineX = chart.crosshair.x;
-			chart.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+			chart.ctx.fillStyle = this.getOption(chart, 'line', 'fillBehind');
 			chart.ctx.fillRect(
 				lineX, 0, chart.width, yScale.getPixelForValue(yScale.min),
 			);
