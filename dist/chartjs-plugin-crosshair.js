@@ -374,14 +374,16 @@ function TracePlugin(Chart) {
 				chart.update();
 			}
 
-			if (this.getOption(chart, 'line', 'positionWhenInactive') === 'start') {
-				chart.crosshair.x = 0;
-			} else if (this.getOption(chart, 'line', 'positionWhenInactive') === 'end') {
-				chart.crosshair.x = chart.width;
-			} else {
+			if(!isActive) {
+				if (this.getOption(chart, 'line', 'positionWhenInactive') === 'start') {
+					chart.crosshair.x = 0;
+				} else if (this.getOption(chart, 'line', 'positionWhenInactive') === 'end') {
+					chart.crosshair.x = chart.width;
+				}
+			}
+			else {
 				chart.crosshair.x = e.x;
 			}
-
 
 			chart.draw();
 
@@ -612,11 +614,12 @@ function TracePlugin(Chart) {
 			var color = this.getOption(chart, 'line', 'color');
 			var dashPattern = this.getOption(chart, 'line', 'dashPattern');
 			var snapEnabled = this.getOption(chart, 'snap', 'enabled');
+			var positionWhenInactive = this.getOption(chart, 'line', 'positionWhenInactive');
 
 			var lineX = chart.crosshair.x;
 			var isHoverIntersectOff = chart.config.options.hover.intersect === false;
 
-			if (snapEnabled && isHoverIntersectOff && chart.active.length) {
+			if ((!positionWhenInactive || positionWhenInactive && chart.crosshair.enabled) && snapEnabled && isHoverIntersectOff && chart.active.length) {
 				lineX = chart.active[0]._view.x;
 			}
 
@@ -637,15 +640,33 @@ function TracePlugin(Chart) {
 
 				var dataset = chart.data.datasets[chartIndex];
 				var meta = chart.getDatasetMeta(chartIndex);
+				var snapEnabled = this.getOption(chart, 'snap', 'enabled');
+				var positionWhenInactive = this.getOption(chart, 'line', 'positionWhenInactive');
+	
+				var lineX = chart.crosshair.x;
+				var isHoverIntersectOff = chart.config.options.hover.intersect === false;
+	
+				if ((!positionWhenInactive || positionWhenInactive && chart.crosshair.enabled) && snapEnabled && isHoverIntersectOff && chart.active.length) {
+					lineX = chart.active[0]._view.x;
+				}
 
+				var xScale = chart.scales[meta.xAxisID];
 				var yScale = chart.scales[meta.yAxisID];
 
-				if (meta.hidden || !dataset.interpolate) {
+				if (!positionWhenInactive && (meta.hidden || !dataset.interpolate)) {
 					continue;
 				}
 
+				const xValue = xScale.getValueForPixel(lineX);
+				var index = dataset.data.findIndex(function(o) {
+					return o.x >= xValue;
+				});
+
+				var xPosition = positionWhenInactive ? xScale.getPixelForValue(dataset.data[index].x) : chart.crosshair.x;
+				var yPosition = positionWhenInactive ? yScale.getPixelForValue(dataset.data[index].y) : yScale.getPixelForValue(dataset.interpolatedValue);
+
 				chart.ctx.beginPath();
-				chart.ctx.arc(chart.crosshair.x, yScale.getPixelForValue(dataset.interpolatedValue), 3, 0, 2 * Math.PI, false);
+				chart.ctx.arc(xPosition, yPosition, 3, 0, 2 * Math.PI, false);
 				chart.ctx.fillStyle = 'white';
 				chart.ctx.lineWidth = 2;
 				chart.ctx.strokeStyle = dataset.borderColor;
