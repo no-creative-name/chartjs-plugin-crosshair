@@ -524,7 +524,7 @@ export default function(Chart) {
 				var xScale = chart.scales[meta.xAxisID];
 				var yScale = chart.scales[meta.yAxisID];
 
-				if (!positionWhenInactive && (meta.hidden || !dataset.interpolate)) {
+				if (meta.hidden || (!snapEnabled && !dataset.interpolate)) {
 					continue;
 				}
 
@@ -533,8 +533,8 @@ export default function(Chart) {
 					return o.x >= xValue;
 				});
 
-				var xPosition = positionWhenInactive ? xScale.getPixelForValue(dataset.data[index].x) : chart.crosshair.x;
-				var yPosition = positionWhenInactive ? yScale.getPixelForValue(dataset.data[index].y) : yScale.getPixelForValue(dataset.interpolatedValue);
+				var xPosition = (snapEnabled || !dataset.interpolate) ? xScale.getPixelForValue(dataset.data[index].x) : chart.crosshair.x;
+				var yPosition = (snapEnabled || !dataset.interpolate) ? yScale.getPixelForValue(dataset.data[index].y) : yScale.getPixelForValue(dataset.interpolatedValue);
 
 				chart.ctx.beginPath();
 				chart.ctx.arc(xPosition, yPosition, 3, 0, 2 * Math.PI, false);
