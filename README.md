@@ -30,8 +30,14 @@ new Chart(ctx, {
     plugins: {
       crosshair: {
         line: {
-          color: '#F66',  // crosshair line color
-          width: 1        // crosshair line width
+          color: '#F66',                  // crosshair line color
+          width: 1,                       // crosshair line width
+          positionWhenInactive: 'end',    // position of crosshair when user is not interacting ('start' / 'end' / undefined)
+          deactivateEvents: [             // array of events that deactivate line
+            'mouseout',
+            'mouseup',
+            'touchend',
+          ],
         },
         sync: {
           enabled: true,            // enable trace line syncing with other charts
