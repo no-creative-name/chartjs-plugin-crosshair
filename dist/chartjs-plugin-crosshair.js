@@ -338,12 +338,13 @@ function TracePlugin(Chart) {
 
 			chart.crosshair.suppressTooltips = e.stop && suppressTooltips;
 
-			var isActive = (this.getOption(chart, 'line', 'deactivateEvents').every(eventType => e.type !== eventType) && (e.x > xScale.getPixelForValue(xScale.min) && e.x < xScale.getPixelForValue(xScale.max)));
+			var isUserInteracting = (this.getOption(chart, 'line', 'deactivateEvents').every(eventType => e.type !== eventType) && (e.x > xScale.getPixelForValue(xScale.min) && e.x < xScale.getPixelForValue(xScale.max)));
 			
 			if(this.getOption(chart, 'line', 'positionWhenInactive')) {
 				chart.crosshair.enabled = true;
+				chart.crosshair.userInteracting = isUserInteracting;
 			} else {
-				chart.crosshair.enabled = isActive;
+				chart.crosshair.enabled = isUserInteracting;
 			}
 
 			if (!chart.crosshair.enabled) {
@@ -616,7 +617,7 @@ function TracePlugin(Chart) {
 			var lineX = chart.crosshair.x;
 			var isHoverIntersectOff = chart.config.options.hover.intersect === false;
 
-			if ((!positionWhenInactive || positionWhenInactive && chart.crosshair.enabled) && snapEnabled && isHoverIntersectOff && chart.active.length) {
+			if ((!positionWhenInactive || positionWhenInactive && chart.crosshair.userInteracting)  && chart.crosshair.enabled && snapEnabled && isHoverIntersectOff && chart.active.length) {
 				lineX = chart.active[0]._view.x;
 			}
 
@@ -643,7 +644,7 @@ function TracePlugin(Chart) {
 				var lineX = chart.crosshair.x;
 				var isHoverIntersectOff = chart.config.options.hover.intersect === false;
 	
-				if ((!positionWhenInactive || positionWhenInactive && chart.crosshair.enabled) && snapEnabled && isHoverIntersectOff && chart.active.length) {
+				if ((!positionWhenInactive || positionWhenInactive && chart.crosshair.userInteracting) && chart.crosshair.enabled && snapEnabled && isHoverIntersectOff && chart.active.length) {
 					lineX = chart.active[0]._view.x;
 				}
 
