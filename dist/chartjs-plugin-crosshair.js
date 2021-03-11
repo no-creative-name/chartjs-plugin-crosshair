@@ -398,9 +398,6 @@ function TracePlugin(Chart) {
 			if (chart.crosshair.dragStarted) {
 				this.drawZoombox(chart);
 			} else {
-				if(this.getOption(chart, 'line', 'fillBehind')) {
-					this.drawGreyedOutRect(chart);
-				}
 				this.drawTraceLine(chart);
 				this.interpolateValues(chart);
 				this.drawTracePoints(chart);
@@ -675,15 +672,6 @@ function TracePlugin(Chart) {
 
 			}
 
-		},
-
-		drawGreyedOutRect: function(chart) {
-			var yScale = this.getYScale(chart);
-			var lineX = chart.crosshair.x;
-			chart.ctx.fillStyle = this.getOption(chart, 'line', 'fillBehind');
-			chart.ctx.fillRect(
-				lineX, 0, chart.width, yScale.getPixelForValue(yScale.min),
-			);
 		},
 
 		interpolateValues: function(chart) {
