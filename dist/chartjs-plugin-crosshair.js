@@ -375,7 +375,7 @@ function TracePlugin(Chart) {
 				chart.update();
 			}
 
-			if(!isActive) {
+			if(!isUserInteracting) {
 				if (this.getOption(chart, 'line', 'positionWhenInactive') === 'start') {
 					chart.crosshair.x = 0;
 				} else if (this.getOption(chart, 'line', 'positionWhenInactive') === 'end') {
