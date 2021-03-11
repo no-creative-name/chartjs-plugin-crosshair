@@ -654,13 +654,15 @@ function TracePlugin(Chart) {
 					continue;
 				}
 
-				const xValue = xScale.getValueForPixel(lineX);
+				var xValue = xScale.getValueForPixel(lineX);
 				var index = dataset.data.findIndex(function(o) {
 					return o.x >= xValue;
 				});
 
-				var xPosition = (snapEnabled || !dataset.interpolate) ? xScale.getPixelForValue(dataset.data[index].x) : chart.crosshair.x;
-				var yPosition = (snapEnabled || !dataset.interpolate) ? yScale.getPixelForValue(dataset.data[index].y) : yScale.getPixelForValue(dataset.interpolatedValue);
+				var canSnap = (snapEnabled || !dataset.interpolate) && dataset.data[index];
+
+				var xPosition = canSnap ? xScale.getPixelForValue(dataset.data[index].x) : chart.crosshair.x;
+				var yPosition = canSnap ? yScale.getPixelForValue(dataset.data[index].y) : yScale.getPixelForValue(dataset.interpolatedValue);
 
 				chart.ctx.beginPath();
 				chart.ctx.arc(xPosition, yPosition, 3, 0, 2 * Math.PI, false);
